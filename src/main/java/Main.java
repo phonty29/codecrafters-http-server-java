@@ -28,17 +28,18 @@ public class Main {
        String requestMessage, responseMessage;
        // Then print in standard output
 
-       InputStream inStream = sock.getInputStream();
        // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
-       InputStreamReader inStreamReader = new InputStreamReader(inStream);
+       InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
        BufferedReader bufReader = new BufferedReader(inStreamReader);
-       requestMessage = bufReader.readLine();
 
+       requestMessage = bufReader.readLine();
        System.out.println("Received message:" + " " + requestMessage);
+
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        responseMessage = "HTTP/1.1 200 OK\r\n\r\n";
+
        System.out.println("Response message:" + " " + responseMessage);
-       sockOutWriter.println();
+       sockOutWriter.println(responseMessage);
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
