@@ -36,7 +36,7 @@ public class Main {
 
        System.out.println("Received message:" + " " + requestMessage);
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-       responseMessage = "HTTP/1.1 200 OK\\r\\n\\r\\n\n";
+       responseMessage = "HTTP/1.1 200 OK\\r\\n\\r\\n";
        System.out.println("Response message:" + " " + responseMessage);
        sockOutWriter.println();
      } catch (IOException e) {
