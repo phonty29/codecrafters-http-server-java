@@ -1,4 +1,8 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,8 +20,25 @@ public class Main {
        // ensures that we don't run into 'Address already in use' errors
        serverSocket.setReuseAddress(true);
 
-       serverSocket.accept(); // Wait for connection from client.
+       Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
+
        System.out.println("accepted new connection");
+
+       // Read input stream from socket and convert it to String
+       String requestMessage, responseMessage;
+       // Then print in standard output
+
+       InputStream inStream = sock.getInputStream();
+       // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
+       InputStreamReader inStreamReader = new InputStreamReader(inStream);
+       BufferedReader bufReader = new BufferedReader(inStreamReader);
+       requestMessage = bufReader.readLine();
+
+       System.out.println("Received message:" + " " + requestMessage);
+       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
+       responseMessage = "HTTP/1.1 200 OK\r\n\r\n";
+       System.out.println("Response message:" + " " + responseMessage);
+       sockOutWriter.println();
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
