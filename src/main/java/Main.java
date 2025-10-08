@@ -34,7 +34,7 @@ public class Main {
 
        requestMessage = bufReader.readLine();
        System.out.println("Request message: " +  requestMessage);
-       String desiredRequestTarget = "/index.html";
+       String desiredRequestTarget = "/";
        String requestTarget = getRequestTarget(requestMessage);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
