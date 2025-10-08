@@ -33,6 +33,7 @@ public class Main {
        BufferedReader bufReader = new BufferedReader(inStreamReader);
 
        requestMessage = bufReader.readLine();
+       System.out.println("Request message: " +  requestMessage);
        String desiredRequestTarget = "/index.html";
        String requestTarget = getRequestTarget(requestMessage);
 
