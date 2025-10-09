@@ -38,6 +38,7 @@ public class Main {
        } else {
          String content = getContent(requestTarget);
          httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
+         System.out.println(httpResponseMessage);
        }
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
