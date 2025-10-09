@@ -75,7 +75,8 @@ public class Main {
     var matcher = Pattern.compile("GET (.*?) HTTP/1.1").matcher(requestMessage);
     if (matcher.find()) {
       String requestTarget = matcher.group(1);
-      if (requestTarget.startsWith(TARGET_START_SEQUENCE)) {
+      if (requestTarget.startsWith(TARGET_START_SEQUENCE) || requestTarget.contentEquals(
+          EMPTY_TARGET)) {
         return requestTarget;
       }
       return EMPTY_STRING;
