@@ -38,7 +38,6 @@ public class Main {
        } else {
          String content = getContent(requestTarget);
          httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
-         System.out.println(httpResponseMessage);
        }
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
@@ -61,7 +60,7 @@ public class Main {
         return "HTTP/1.1 200 OK\r\n\r\n";
       }
       case SUCCESS -> {
-        return String.format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r%s", content.length(), content);
+        return String.format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", content.length(), content);
       }
       case NOT_FOUND -> {
         return "HTTP/1.1 404 Not Found\r\n\r\n";
