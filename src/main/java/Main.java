@@ -28,6 +28,7 @@ public class Main {
 
        // Read input stream from socket and convert it to String
        String content = getHeaderValueFromSocketInputStream(sock, "user-agent");
+       System.out.println("Content: " + content);
        String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
@@ -49,7 +50,6 @@ public class Main {
       if (line.startsWith(headerFormat) || line.toLowerCase()
           .startsWith(
               headerFormat.toLowerCase())) {
-        System.out.println("True: " + line.substring(headerFormat.length()));
         headerValue.set(line.substring(headerFormat.length()));
       }
     });
