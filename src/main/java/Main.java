@@ -43,18 +43,17 @@ public class Main {
     // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
     // Iterate over input streamlines
-    AtomicReference<String> headerValue = new AtomicReference<>("");
-    try (BufferedReader bufReader = new BufferedReader(inStreamReader)) {
-      bufReader.lines().forEach(line -> {
-        String headerFormat = headerName + ": ";
-        if (line.startsWith(headerFormat) || line.toLowerCase()
-            .startsWith(
-                headerFormat.toLowerCase())) {
-          headerValue.set(line.substring(headerFormat.length()));
-        }
-      });
+    BufferedReader bufReader = new BufferedReader(inStreamReader);
+    String line, headerValue = "", headerFormat = headerName + ": ";
+    while ((line = bufReader.readLine()) != null && !line.isEmpty()) {
+      if (line.startsWith(headerFormat) || line.toLowerCase()
+          .startsWith(
+              headerFormat.toLowerCase())) {
+        headerValue = line.substring(headerFormat.length());
+      }
     }
-    return headerValue.get();
+
+    return headerValue;
   }
 
   private static String buildHTTPResponseMessage(HTTPStatusCode statusCode, String content) {
