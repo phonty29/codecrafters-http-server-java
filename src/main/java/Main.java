@@ -52,7 +52,7 @@ public class Main {
         headerValue.set(line.substring(headerFormat.length()));
       }
     });
-    bufReader.close();
+    bufReader.reset();
     return headerValue.get();
   }
 
