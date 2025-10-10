@@ -45,7 +45,6 @@ public class Main {
     // Iterate over input streamlines
     AtomicReference<String> headerValue = new AtomicReference<>("");
     bufReader.lines().forEach(line -> {
-      System.out.println(line);
       String headerFormat = headerName + ": ";
       if (line.startsWith(headerFormat) || line.toLowerCase()
           .startsWith(
@@ -53,6 +52,7 @@ public class Main {
         headerValue.set(line.substring(headerFormat.length()));
       }
     });
+    bufReader.close();
     return headerValue.get();
   }
 
