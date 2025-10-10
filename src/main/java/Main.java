@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicReference;
 //import java.util.regex.Pattern;
 
 public class Main {
@@ -26,13 +27,8 @@ public class Main {
        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
 
        // Read input stream from socket and convert it to String
-       String httpRequestMessage, httpResponseMessage;
-
-       httpRequestMessage = getHTTPRequestMessageFromSocket(sock);
-//       System.out.println("HTTP Request Message: " + httpRequestMessage);
-
-       String content = getHeaderValue("user-agent", httpRequestMessage);
-       httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
+       String content = getHeaderValueFromSocketInputStream(sock, "user-agent");
+       String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
 //       System.out.println("HTTP Response Message: " + httpResponseMessage);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
@@ -42,29 +38,21 @@ public class Main {
      }
   }
 
-  private static String getHTTPRequestMessageFromSocket(Socket sock) throws IOException {
+  private static String getHeaderValueFromSocketInputStream(Socket sock, String headerName) throws IOException {
     // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
     BufferedReader bufReader = new BufferedReader(inStreamReader);
-    // Iterate over message
+    // Iterate over input stream lines
+    AtomicReference<String> headerValue = new AtomicReference<>("");
     bufReader.lines().forEach(line -> {
-      System.out.println("HTTP Request Message Line: " + line);
-    });
-    return bufReader.readLine();
-  }
-
-  private static String getHeaderValue(String headerName, String requestMessage) {
-    String[] splitRequestMessage = requestMessage.split("\r\n");
-    // Iterate over headers. Ignore request line, message body and artifact during split
-    for (int i = 1; i < splitRequestMessage.length - 2; i++) {
       String headerFormat = headerName + ": ";
-      if (splitRequestMessage[i].startsWith(headerFormat) || splitRequestMessage[i].toLowerCase()
+      if (line.startsWith(headerFormat) || line.toLowerCase()
           .startsWith(
               headerFormat.toLowerCase())) {
-        return splitRequestMessage[i].substring(headerFormat.length());
+        headerValue.set(line.substring(headerFormat.length()));
       }
-    }
-    return "";
+    });
+    return headerValue.get();
   }
 
   private static String buildHTTPResponseMessage(HTTPStatusCode statusCode, String content) {
