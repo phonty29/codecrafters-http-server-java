@@ -9,7 +9,6 @@ import java.net.Socket;
 public class Main {
   private final static String EMPTY_TARGET = "/";
   private final static String EMPTY_STRING = "";
-  private final static String HEADER_NAME = "User-Agent";
 
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -30,11 +29,11 @@ public class Main {
        String httpRequestMessage, httpResponseMessage;
 
        httpRequestMessage = getHTTPRequestMessageFromSocket(sock);
-       System.out.println("HTTP Request Message: " + httpRequestMessage);
+//       System.out.println("HTTP Request Message: " + httpRequestMessage);
 
-       String content = getHeaderValue(HEADER_NAME, httpRequestMessage);
+       String content = getHeaderValue("user-agent", httpRequestMessage);
        httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
-       System.out.println("HTTP Response Message: " + httpResponseMessage);
+//       System.out.println("HTTP Response Message: " + httpResponseMessage);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(httpResponseMessage);
@@ -47,6 +46,10 @@ public class Main {
     // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
     BufferedReader bufReader = new BufferedReader(inStreamReader);
+    // Iterate over message
+    bufReader.lines().forEach(line -> {
+      System.out.println("HTTP Request Message Line: " + line);
+    });
     return bufReader.readLine();
   }
 
