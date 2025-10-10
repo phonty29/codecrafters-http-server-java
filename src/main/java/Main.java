@@ -4,12 +4,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.regex.Pattern;
+//import java.util.regex.Pattern;
 
 public class Main {
   private final static String EMPTY_TARGET = "/";
   private final static String EMPTY_STRING = "";
-  private final static String TARGET_START_SEQUENCE = "/echo/";
+  private final static String HEADER_NAME = "User-Agent";
 
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -30,15 +30,11 @@ public class Main {
        String httpRequestMessage, httpResponseMessage;
 
        httpRequestMessage = getHTTPRequestMessageFromSocket(sock);
-       String requestTarget = getRequestTarget(httpRequestMessage);
-       if (requestTarget.contentEquals(EMPTY_TARGET)) {
-         httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.NO_CONTENT, EMPTY_STRING);
-       } else if (requestTarget.contentEquals(EMPTY_STRING)) {
-         httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.NOT_FOUND, EMPTY_STRING);
-       } else {
-         String content = getContent(requestTarget);
-         httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
-       }
+       System.out.println("HTTP Request Message: " + httpRequestMessage);
+
+       String content = getHeaderValue(HEADER_NAME, httpRequestMessage);
+       httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
+       System.out.println("HTTP Response Message: " + httpResponseMessage);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(httpResponseMessage);
@@ -52,6 +48,20 @@ public class Main {
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
     BufferedReader bufReader = new BufferedReader(inStreamReader);
     return bufReader.readLine();
+  }
+
+  private static String getHeaderValue(String headerName, String requestMessage) {
+    String[] splitRequestMessage = requestMessage.split("\r\n");
+    // Iterate over headers. Ignore request line, message body and artifact during split
+    for (int i = 1; i < splitRequestMessage.length - 2; i++) {
+      String headerFormat = headerName + ": ";
+      if (splitRequestMessage[i].startsWith(headerFormat) || splitRequestMessage[i].toLowerCase()
+          .startsWith(
+              headerFormat.toLowerCase())) {
+        return splitRequestMessage[i].substring(headerFormat.length());
+      }
+    }
+    return "";
   }
 
   private static String buildHTTPResponseMessage(HTTPStatusCode statusCode, String content) {
@@ -71,27 +81,27 @@ public class Main {
     }
   }
 
-  private static String getRequestTarget(String requestMessage) {
-    var matcher = Pattern.compile("GET (.*?) HTTP/1.1").matcher(requestMessage);
-    if (matcher.find()) {
-      String requestTarget = matcher.group(1);
-      if (requestTarget.startsWith(TARGET_START_SEQUENCE) || requestTarget.contentEquals(
-          EMPTY_TARGET)) {
-        return requestTarget;
-      }
-      return EMPTY_STRING;
-    }
-    return EMPTY_STRING;
-  }
-
-  private static String getContent(String requestTarget) {
-    int startIndex = TARGET_START_SEQUENCE.length();
-    return requestTarget.substring(startIndex);
-  }
-
   private enum HTTPStatusCode {
     SUCCESS,
     NO_CONTENT,
     NOT_FOUND
   }
+
+//  private static String getRequestTarget(String requestMessage) {
+//    var matcher = Pattern.compile("GET (.*?) HTTP/1.1").matcher(requestMessage);
+//    if (matcher.find()) {
+//      String requestTarget = matcher.group(1);
+//      if (requestTarget.startsWith(TARGET_START_SEQUENCE) || requestTarget.contentEquals(
+//          EMPTY_TARGET)) {
+//        return requestTarget;
+//      }
+//      return EMPTY_STRING;
+//    }
+//    return EMPTY_STRING;
+//  }
+//
+//  private static String getContentOfRequestTarget(String requestTarget) {
+//    int startIndex = TARGET_START_SEQUENCE.length();
+//    return requestTarget.substring(startIndex);
+//  }
 }
