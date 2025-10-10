@@ -29,7 +29,6 @@ public class Main {
        // Read input stream from socket and convert it to String
        String content = getHeaderValueFromSocketInputStream(sock, "user-agent");
        String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
-//       System.out.println("HTTP Response Message: " + httpResponseMessage);
 
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(httpResponseMessage);
@@ -42,13 +41,15 @@ public class Main {
     // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
     BufferedReader bufReader = new BufferedReader(inStreamReader);
-    // Iterate over input stream lines
+    // Iterate over input streamlines
     AtomicReference<String> headerValue = new AtomicReference<>("");
     bufReader.lines().forEach(line -> {
+      System.out.println(line);
       String headerFormat = headerName + ": ";
       if (line.startsWith(headerFormat) || line.toLowerCase()
           .startsWith(
               headerFormat.toLowerCase())) {
+        System.out.println("True: " + line.substring(headerFormat.length()));
         headerValue.set(line.substring(headerFormat.length()));
       }
     });
