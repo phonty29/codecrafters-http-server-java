@@ -38,21 +38,22 @@ public class Main {
      }
   }
 
-  private static String getHeaderValueFromSocketInputStream(Socket sock, String headerName) throws IOException {
+  private static String getHeaderValueFromSocketInputStream(Socket sock, String headerName)
+  throws IOException {
     // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
     InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
-    BufferedReader bufReader = new BufferedReader(inStreamReader);
     // Iterate over input streamlines
     AtomicReference<String> headerValue = new AtomicReference<>("");
-    bufReader.lines().forEach(line -> {
-      String headerFormat = headerName + ": ";
-      if (line.startsWith(headerFormat) || line.toLowerCase()
-          .startsWith(
-              headerFormat.toLowerCase())) {
-        headerValue.set(line.substring(headerFormat.length()));
-      }
-    });
-    bufReader.reset();
+    try (BufferedReader bufReader = new BufferedReader(inStreamReader)) {
+      bufReader.lines().forEach(line -> {
+        String headerFormat = headerName + ": ";
+        if (line.startsWith(headerFormat) || line.toLowerCase()
+            .startsWith(
+                headerFormat.toLowerCase())) {
+          headerValue.set(line.substring(headerFormat.length()));
+        }
+      });
+    }
     return headerValue.get();
   }
 
