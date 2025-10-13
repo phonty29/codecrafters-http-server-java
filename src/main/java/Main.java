@@ -39,14 +39,13 @@ public class Main {
               .addHeader("content-length", String.valueOf(userAgentValue.get().length()))
               .messageBody(userAgentValue.get())
               .build();
-          System.out.println("if true: " + response.compiled());
         } else {
           response = httpResponseBuilder
               .statusCode(HttpStatusCode.NOT_FOUND)
               .build();
         }
 
-        sockOutWriter.print("HTTP/1.1 200 OK\r\n\r\n");
+        sockOutWriter.println(response);
         inReader.close();
       }
 
