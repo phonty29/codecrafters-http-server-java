@@ -92,7 +92,6 @@ public class HttpRequest {
   }
 
   public Optional<String> getHeaderValue(String key) {
-    System.out.println("headers: " + this.headers);
     if (this.headers.containsKey(key)) {
       return Optional.of(this.headers.get(key));
     }
