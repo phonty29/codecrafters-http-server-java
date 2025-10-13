@@ -148,6 +148,8 @@ public class HttpRequest {
 
     private void setMessageBody() throws IOException {
       StringBuilder bodyBuilder = new StringBuilder();
+      String stringContentLength = this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY);
+      System.out.println("setMessageBody: " + stringContentLength);
       int contentLength = Integer.parseInt(this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY));
       if (contentLength > 0) {
         char[] charBuf = new char[contentLength];
