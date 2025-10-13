@@ -30,6 +30,7 @@ public class Main {
 
         var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
         HttpResponse response;
+        System.out.println("1");
         if (Objects.nonNull(value)) {
           response = httpResponseBuilder
               .statusCode(HttpStatusCode.SUCCESS)
@@ -37,6 +38,7 @@ public class Main {
               .addHeader("content-length", String.valueOf(value.length()))
               .messageBody(value)
               .build();
+          System.out.println("2");
         } else {
           response = httpResponseBuilder
               .statusCode(HttpStatusCode.NOT_FOUND)
@@ -45,10 +47,12 @@ public class Main {
         PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
         sockOutWriter.print("HTTP/1.1 200 OK\r\n\r\n");
 
+        System.out.println("3");
         inReader.close();
       }
 
      } catch (IOException e) {
+      System.out.println("4");
        System.out.println("IOException: " + e.getMessage());
        throw new RuntimeException(e);
      }
