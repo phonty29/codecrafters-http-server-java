@@ -43,7 +43,7 @@ public class Main {
              .build();
        }
 
-       System.out.println(response.compiled());
+       System.out.println("Response compiled: " + response.compiled());
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(response.compiled());
      } catch (IOException e) {
