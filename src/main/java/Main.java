@@ -27,7 +27,9 @@ public class Main {
         BufferedReader inReader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
 
+        System.out.println("Before building HTTP request");
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
+        System.out.println("After building HTTP request");
         String value = httpRequest.getHeaderValue("user-agent");
 
         var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
