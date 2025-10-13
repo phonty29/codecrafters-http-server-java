@@ -43,7 +43,7 @@ public class Main {
               .build();
         }
         PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-        sockOutWriter.print(response.compiled());
+        sockOutWriter.print("HTTP/1.1 200 OK\r\n\r\n");
 
         inReader.close();
       }
