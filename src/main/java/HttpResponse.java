@@ -35,9 +35,6 @@ public class HttpResponse {
   }
 
   public String compiled() {
-    System.out.println(this.compileStatusLine());
-    System.out.println(this.compileHeaders());
-    System.out.println(this.messageBody);
     return this.compileStatusLine() + this.compileHeaders() + this.messageBody;
   }
 
