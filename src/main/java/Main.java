@@ -22,7 +22,7 @@ public class Main {
 
        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
 
-       var httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
+       HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
        String value = httpRequest.getHeaderValue("user-agent");
        System.out.println("HTTP header 'user-agent': " + value);
 
