@@ -1,6 +1,8 @@
 import enums.HttpStatusCode;
 import enums.HttpVersion;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,7 +24,8 @@ public class Main {
        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
 
       while (!sock.isClosed()) {
-        HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
+        BufferedReader inReader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+        HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         String value = httpRequest.getHeaderValue("user-agent");
 
         var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
@@ -41,6 +44,8 @@ public class Main {
         }
         PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
         sockOutWriter.print(response.compiled());
+
+        inReader.close();
       }
 
      } catch (IOException e) {

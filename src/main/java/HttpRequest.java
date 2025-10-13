@@ -6,8 +6,6 @@ import exceptions.HttpRequestLineLengthException;
 import exceptions.HttpVersionNotSupported;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -101,21 +99,16 @@ public class HttpRequest {
 
   public static class HttpRequestBuilder {
     private final static int REQUEST_LINE_LENGTH = 3;
+    private BufferedReader reader;
 
-    private BufferedReader bufferedReader;
     private final HttpRequest httpRequest = new HttpRequest();
 
-    private void readInputStream(InputStream inStream) {
-      InputStreamReader inputStreamReader = new InputStreamReader(inStream);
-      this.bufferedReader = new BufferedReader(inputStreamReader);
-    }
-
-    public HttpRequestBuilder fromInputStream(InputStream inputStream) throws IOException {
-      this.readInputStream(inputStream);
-      String line = bufferedReader.readLine();
+    public HttpRequestBuilder fromReader(BufferedReader reader) throws IOException {
+      this.reader = reader;
+      String line = this.reader.readLine();
       this.setRequestLine(line);
       this.setHeaders();
-      line = bufferedReader.readLine();
+      line = this.reader.readLine();
       if (line != null) {
         this.httpRequest.setMessageBody(line);
       }
@@ -145,7 +138,7 @@ public class HttpRequest {
 
     private void setHeaders() throws IOException {
       String line;
-      while ((line = this.bufferedReader.readLine()) != null && !line.isEmpty()) {
+      while ((line = this.reader.readLine()) != null && !line.isEmpty()) {
         int idx = line.indexOf(":");
         if (idx == -1) {
           throw new HttpIncorrectHeaderFormat(line);
