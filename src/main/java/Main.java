@@ -45,7 +45,7 @@ public class Main {
               .build();
         }
 
-        sockOutWriter.println(response);
+        sockOutWriter.println(response.compiled());
         inReader.close();
       }
 
