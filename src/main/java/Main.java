@@ -7,8 +7,6 @@ import java.net.Socket;
 import java.util.Objects;
 
 public class Main {
-  private final static String EMPTY_TARGET = "/";
-  private final static String EMPTY_STRING = "";
 
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -23,26 +21,28 @@ public class Main {
 
        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
 
-       HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
-       String value = httpRequest.getHeaderValue("user-agent");
+      while (!sock.isClosed()) {
+        HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
+        String value = httpRequest.getHeaderValue("user-agent");
 
-       var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
-       HttpResponse response;
-       if (Objects.nonNull(value)) {
-         response = httpResponseBuilder
-             .statusCode(HttpStatusCode.SUCCESS)
-             .addHeader("content-type", "text/plain")
-             .addHeader("content-length", String.valueOf(value.length()))
-             .messageBody(value)
-             .build();
-         System.out.println("Built");
-       } else {
-         response = httpResponseBuilder
-             .statusCode(HttpStatusCode.NOT_FOUND)
-             .build();
-       }
-       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-       sockOutWriter.println(response.compiled());
+        var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
+        HttpResponse response;
+        if (Objects.nonNull(value)) {
+          response = httpResponseBuilder
+              .statusCode(HttpStatusCode.SUCCESS)
+              .addHeader("content-type", "text/plain")
+              .addHeader("content-length", String.valueOf(value.length()))
+              .messageBody(value)
+              .build();
+        } else {
+          response = httpResponseBuilder
+              .statusCode(HttpStatusCode.NOT_FOUND)
+              .build();
+        }
+        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
+        sockOutWriter.print(response.compiled());
+      }
+
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
        throw new RuntimeException(e);
