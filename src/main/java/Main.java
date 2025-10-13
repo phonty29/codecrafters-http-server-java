@@ -31,15 +31,14 @@ public class Main {
        var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
        HttpResponse response;
        if (Objects.nonNull(value)) {
-         System.out.println("If");
          response = httpResponseBuilder
              .statusCode(HttpStatusCode.SUCCESS)
              .addHeader("content-type", "text/plain")
              .addHeader("content-length", String.valueOf(value.length()))
              .messageBody(value)
              .build();
+         System.out.println("Built");
        } else {
-         System.out.println("Else");
          response = httpResponseBuilder
              .statusCode(HttpStatusCode.NOT_FOUND)
              .build();
