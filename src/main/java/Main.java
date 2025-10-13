@@ -37,12 +37,12 @@ public class Main {
              .addHeader("content-length", String.valueOf(value.length()))
              .messageBody(value)
              .build();
-         System.out.println("Built");
        } else {
          response = httpResponseBuilder
              .statusCode(HttpStatusCode.NOT_FOUND)
              .build();
        }
+       System.out.println("Compiled: " + response.compiled());
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(response.compiled());
      } catch (IOException e) {
