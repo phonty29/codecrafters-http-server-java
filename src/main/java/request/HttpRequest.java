@@ -65,10 +65,10 @@ public class HttpRequest {
 
   private void setHttpMethod(String method) {
     try {
+      this.setHttpMethod(HttpMethod.valueOf(method));
       if (Objects.nonNull(this.httpVersion) && !this.httpVersion.supportsMethod(this.httpMethod)) {
         throw new IllegalArgumentException();
       }
-      this.setHttpMethod(HttpMethod.valueOf(method));
     } catch (IllegalArgumentException ex) {
       throw new HttpMethodNotSupported(this.httpVersion, method);
     }
