@@ -35,7 +35,7 @@ public class Main {
              .addHeader("content-length", String.valueOf(value.length()))
              .messageBody(value)
              .build();
-         System.out.println("Response");
+         System.out.println("Built");
        } else {
          response = httpResponseBuilder
              .statusCode(HttpStatusCode.NOT_FOUND)
