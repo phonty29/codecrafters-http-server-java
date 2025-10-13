@@ -25,6 +25,8 @@ public class Main {
 
       while (!sock.isClosed()) {
         BufferedReader inReader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
+
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         String value = httpRequest.getHeaderValue("user-agent");
 
@@ -42,10 +44,8 @@ public class Main {
               .statusCode(HttpStatusCode.NOT_FOUND)
               .build();
         }
-        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-        System.out.println("sockOutWriter");
-        sockOutWriter.print("HTTP/1.1 200 OK\r\n\r\n");
 
+        sockOutWriter.print("HTTP/1.1 200 OK\r\n\r\n");
         inReader.close();
       }
 
