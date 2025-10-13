@@ -1,6 +1,7 @@
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import exceptions.HttpVersionNotSupported;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -10,7 +11,7 @@ public class HttpResponse {
   private HttpVersion version;
   private HttpStatusCode statusCode;
   // Response headers
-  private Map<String, String> headers;
+  private final Map<String, String> headers = new HashMap<>();
   // Response message body
   private String messageBody = "";
 
