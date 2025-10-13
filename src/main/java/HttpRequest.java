@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class HttpRequest {
@@ -90,12 +91,12 @@ public class HttpRequest {
     return this.messageBody;
   }
 
-  public String getHeaderValue(String key) {
+  public Optional<String> getHeaderValue(String key) {
     System.out.println("headers: " + this.headers);
     if (this.headers.containsKey(key)) {
-      return this.headers.get(key);
+      return Optional.of(this.headers.get(key));
     }
-    return "";
+    return Optional.empty();
   }
 
   public static class HttpRequestBuilder {
@@ -149,13 +150,15 @@ public class HttpRequest {
 
     private void setMessageBody() throws IOException {
       StringBuilder bodyBuilder = new StringBuilder();
-      String stringContentLength = this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY);
-      int contentLength = Integer.parseInt(this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY));
-      if (contentLength > 0) {
-        char[] charBuf = new char[contentLength];
-        int charRead = this.reader.read(charBuf);
-        if (charRead > 0) {
-          bodyBuilder.append(charBuf);
+      var optContentLength = this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY);
+      if (optContentLength.isPresent()) {
+        int contentLength = Integer.parseInt(optContentLength.get());
+        if (contentLength > 0) {
+          char[] charBuf = new char[contentLength];
+          int charRead = this.reader.read(charBuf);
+          if (charRead > 0) {
+            bodyBuilder.append(charBuf);
+          }
         }
       }
       this.httpRequest.setMessageBody(bodyBuilder.toString());

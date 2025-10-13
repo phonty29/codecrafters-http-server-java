@@ -30,16 +30,16 @@ public class Main {
         System.out.println("Before building HTTP request");
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         System.out.println("After building HTTP request");
-        String value = httpRequest.getHeaderValue("user-agent");
+        var userAgentValue = httpRequest.getHeaderValue("user-agent");
 
         var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
         HttpResponse response;
-        if (Objects.nonNull(value)) {
+        if (userAgentValue.isPresent()) {
           response = httpResponseBuilder
               .statusCode(HttpStatusCode.SUCCESS)
               .addHeader("content-type", "text/plain")
-              .addHeader("content-length", String.valueOf(value.length()))
-              .messageBody(value)
+              .addHeader("content-length", String.valueOf(userAgentValue.get().length()))
+              .messageBody(userAgentValue.get())
               .build();
         } else {
           response = httpResponseBuilder
