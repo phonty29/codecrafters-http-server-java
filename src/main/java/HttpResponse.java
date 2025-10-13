@@ -1,6 +1,5 @@
 import enums.HttpStatusCode;
 import enums.HttpVersion;
-import exceptions.HttpVersionNotSupported;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
