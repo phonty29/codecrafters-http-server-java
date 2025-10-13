@@ -66,6 +66,7 @@ public class HttpRequest {
   private void setHttpMethod(String method) {
     try {
       if (Objects.nonNull(this.httpVersion) && !this.httpVersion.supportsMethod(this.httpMethod)) {
+        log.
         throw new IllegalArgumentException();
       }
       this.setHttpMethod(HttpMethod.valueOf(method));

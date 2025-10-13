@@ -33,6 +33,8 @@ public enum HttpVersion {
   }
 
   public boolean supportsMethod(HttpMethod method) {
+    System.out.println("Log: does not support method: %s" + method);
+    System.out.println("Log: supported methods: %s" + this.methods);
     return this.methods.contains(method);
   }
 }
