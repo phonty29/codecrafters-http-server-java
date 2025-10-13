@@ -1,11 +1,7 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.atomic.AtomicReference;
-//import java.util.regex.Pattern;
+import request.HttpRequest;
 
 public class Main {
   private final static String EMPTY_TARGET = "/";
@@ -26,34 +22,18 @@ public class Main {
 
        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
 
-       // Read input stream from socket and convert it to String
-       String content = getHeaderValueFromSocketInputStream(sock, "user-agent");
-       System.out.println("Content: " + content);
-       String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
+       var httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
+       String value = httpRequest.getHeaderValue("user-agent");
+       System.out.println("HTTP header 'user-agent': " + value);
 
-       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-       sockOutWriter.println(httpResponseMessage);
+
+//       String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
+//
+//       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
+//       sockOutWriter.println(httpResponseMessage);
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
-  }
-
-  private static String getHeaderValueFromSocketInputStream(Socket sock, String headerName)
-  throws IOException {
-    // An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified charset.
-    InputStreamReader inStreamReader = new InputStreamReader(sock.getInputStream());
-    // Iterate over input streamlines
-    BufferedReader bufReader = new BufferedReader(inStreamReader);
-    String line, headerValue = "", headerFormat = headerName + ": ";
-    while ((line = bufReader.readLine()) != null && !line.isEmpty()) {
-      if (line.startsWith(headerFormat) || line.toLowerCase()
-          .startsWith(
-              headerFormat.toLowerCase())) {
-        headerValue = line.substring(headerFormat.length());
-      }
-    }
-
-    return headerValue;
   }
 
   private static String buildHTTPResponseMessage(HTTPStatusCode statusCode, String content) {
