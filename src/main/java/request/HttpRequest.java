@@ -49,8 +49,7 @@ public class HttpRequest {
 
   private void setHttpVersion(String version) {
     try {
-      System.out.println("Before error: " + version);
-      this.setHttpVersion(HttpVersion.valueOf(version));
+      this.setHttpVersion(HttpVersion.fromValue(version));
     } catch (IllegalArgumentException ex) {
       throw new HttpVersionNotSupported(version);
     }

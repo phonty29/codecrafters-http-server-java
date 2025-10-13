@@ -19,6 +19,15 @@ public enum HttpVersion {
     this.methods = methods;
   }
 
+  public static HttpVersion fromValue(String version) {
+    for (var val : HttpVersion.values()) {
+      if (val.version.contentEquals(version)) {
+        return val;
+      }
+    }
+    throw new IllegalArgumentException();
+  }
+
   public String toString() {
     return this.version;
   }
