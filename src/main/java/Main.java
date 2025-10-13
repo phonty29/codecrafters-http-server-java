@@ -16,9 +16,7 @@ public class Main {
 
     // Uncomment this block to pass the first stage
 
-     try {
-       ServerSocket serverSocket = new ServerSocket(4221);
-
+    try (ServerSocket serverSocket = new ServerSocket(4221)) {
        // Since the tester restarts your program quite often, setting SO_REUSEADDR
        // ensures that we don't run into 'Address already in use' errors
        serverSocket.setReuseAddress(true);
@@ -42,11 +40,12 @@ public class Main {
              .statusCode(HttpStatusCode.NOT_FOUND)
              .build();
        }
-       System.out.println("Compiled: " + response.compiled());
+       System.out.println("Response is ready");
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(response.compiled());
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
+       throw new RuntimeException(e);
      }
   }
 }
