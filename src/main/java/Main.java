@@ -1,7 +1,11 @@
+import HttpResponse.HttpResponseBuilder;
+import enums.HttpStatusCode;
+import enums.HttpVersion;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import request.HttpRequest;
+import java.util.Objects;
 
 public class Main {
   private final static String EMPTY_TARGET = "/";
@@ -24,56 +28,26 @@ public class Main {
 
        HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
        String value = httpRequest.getHeaderValue("user-agent");
-       System.out.println("HTTP header 'user-agent': " + value);
 
+       HttpResponseBuilder httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
+       HttpResponse response;
+       if (Objects.nonNull(value)) {
+         response = httpResponseBuilder
+             .statusCode(HttpStatusCode.SUCCESS)
+             .addHeader("content-type", "text/plain")
+             .addHeader("content-length", String.valueOf(value.length()))
+             .messageBody(value)
+             .build();
+       } else {
+         response = httpResponseBuilder
+             .statusCode(HttpStatusCode.NOT_FOUND)
+             .build();
+       }
 
-//       String httpResponseMessage = buildHTTPResponseMessage(HTTPStatusCode.SUCCESS, content);
-//
-//       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-//       sockOutWriter.println(httpResponseMessage);
+       PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
+       sockOutWriter.println(response.compiled());
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
   }
-
-  private static String buildHTTPResponseMessage(HTTPStatusCode statusCode, String content) {
-    switch (statusCode) {
-      case NO_CONTENT -> {
-        return "HTTP/1.1 200 OK\r\n\r\n";
-      }
-      case SUCCESS -> {
-        return String.format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", content.length(), content);
-      }
-      case NOT_FOUND -> {
-        return "HTTP/1.1 404 Not Found\r\n\r\n";
-      }
-      default -> {
-        return "HTTP/1.1 500 Internal Server Error\r\n\r\n";
-      }
-    }
-  }
-
-  private enum HTTPStatusCode {
-    SUCCESS,
-    NO_CONTENT,
-    NOT_FOUND
-  }
-
-//  private static String getRequestTarget(String requestMessage) {
-//    var matcher = Pattern.compile("GET (.*?) HTTP/1.1").matcher(requestMessage);
-//    if (matcher.find()) {
-//      String requestTarget = matcher.group(1);
-//      if (requestTarget.startsWith(TARGET_START_SEQUENCE) || requestTarget.contentEquals(
-//          EMPTY_TARGET)) {
-//        return requestTarget;
-//      }
-//      return EMPTY_STRING;
-//    }
-//    return EMPTY_STRING;
-//  }
-//
-//  private static String getContentOfRequestTarget(String requestTarget) {
-//    int startIndex = TARGET_START_SEQUENCE.length();
-//    return requestTarget.substring(startIndex);
-//  }
 }
