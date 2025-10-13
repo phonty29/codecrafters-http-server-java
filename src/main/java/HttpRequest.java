@@ -99,19 +99,17 @@ public class HttpRequest {
 
   public static class HttpRequestBuilder {
     private final static int REQUEST_LINE_LENGTH = 3;
-    private BufferedReader reader;
+    private final static String CONTENT_LENGTH_KEY = "content-length";
 
     private final HttpRequest httpRequest = new HttpRequest();
+    private BufferedReader reader;
 
     public HttpRequestBuilder fromReader(BufferedReader reader) throws IOException {
       this.reader = reader;
       String line = this.reader.readLine();
       this.setRequestLine(line);
       this.setHeaders();
-      line = this.reader.readLine();
-      if (line != null) {
-        this.httpRequest.setMessageBody(line);
-      }
+      this.setMessageBody();
       return this;
     }
 
@@ -146,6 +144,19 @@ public class HttpRequest {
         String key = line.substring(0, idx).trim(), value = line.substring(idx+1).trim();
         this.httpRequest.addHeader(key, value);
       }
+    }
+
+    private void setMessageBody() throws IOException {
+      StringBuilder bodyBuilder = new StringBuilder();
+      int contentLength = Integer.parseInt(this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY));
+      if (contentLength > 0) {
+        char[] charBuf = new char[contentLength];
+        int charRead = this.reader.read(charBuf);
+        if (charRead > 0) {
+          bodyBuilder.append(charBuf);
+        }
+      }
+      this.httpRequest.setMessageBody(bodyBuilder.toString());
     }
   }
 }
