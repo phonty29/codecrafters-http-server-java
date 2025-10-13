@@ -1,4 +1,3 @@
-import HttpResponse.HttpResponseBuilder;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class Main {
        HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
        String value = httpRequest.getHeaderValue("user-agent");
 
-       HttpResponseBuilder httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
+       var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
        HttpResponse response;
        if (Objects.nonNull(value)) {
          response = httpResponseBuilder
