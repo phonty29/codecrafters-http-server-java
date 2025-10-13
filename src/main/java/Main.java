@@ -27,6 +27,7 @@ public class Main {
 
        HttpRequest httpRequest = HttpRequest.builder().fromInputStream(sock.getInputStream()).build();
        String value = httpRequest.getHeaderValue("user-agent");
+       System.out.println("user-agent: " + value);
 
        var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
        HttpResponse response;
@@ -43,7 +44,6 @@ public class Main {
              .build();
        }
 
-       System.out.println("Response compiled: " + response.compiled());
        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
        sockOutWriter.println(response.compiled());
      } catch (IOException e) {
