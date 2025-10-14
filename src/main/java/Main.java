@@ -1,16 +1,16 @@
-import enums.HttpStatusCode;
-import enums.HttpVersion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
-  private final static HttpRequestHandler handler;
+  private static final ExecutorService threadPool;
   static {
-    handler = new HttpRequestHandler();
+    threadPool = Executors.newFixedThreadPool(10);
   }
 
   public static void main(String[] args) {
@@ -20,26 +20,18 @@ public class Main {
     // Uncomment this block to pass the first stage
 
     try (ServerSocket serverSocket = new ServerSocket(4221)) {
-       // Since the tester restarts your program quite often, setting SO_REUSEADDR
-       // ensures that we don't run into 'Address already in use' errors
-       serverSocket.setReuseAddress(true);
+      // Since the tester restarts your program quite often, setting SO_REUSEADDR
+      // ensures that we don't run into 'Address already in use' errors
+      serverSocket.setReuseAddress(true);
 
-       Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
-
-      while (!sock.isClosed()) {
-        BufferedReader inReader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-        PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
-
-        HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-        HttpResponse response = handler.handle(httpRequest);
-
-        sockOutWriter.println(response.compiled());
-        inReader.close();
+      while (true) {
+        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
+        threadPool.submit(new ConnectionHandler(sock));
       }
 
-     } catch (IOException e) {
-       System.out.println("IOException: " + e.getMessage());
-       throw new RuntimeException(e);
-     }
+    } catch (IOException e) {
+      System.out.println("IOException: " + e.getMessage());
+      throw new RuntimeException(e);
+    }
   }
 }

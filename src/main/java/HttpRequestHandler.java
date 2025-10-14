@@ -5,8 +5,6 @@ public class HttpRequestHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle(HttpRequest request) {
-    var userAgentValue = request.getHeaderValue("user-agent");
-    var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
     return pathHandler(request);
   }
 
