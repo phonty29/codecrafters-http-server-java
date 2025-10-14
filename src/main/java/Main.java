@@ -6,9 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Objects;
 
 public class Main {
+  private final static HttpRequestHandler handler;
+  static {
+    handler = new HttpRequestHandler();
+  }
 
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -28,22 +31,7 @@ public class Main {
         PrintWriter sockOutWriter = new PrintWriter(sock.getOutputStream(), true);
 
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-        var userAgentValue = httpRequest.getHeaderValue("user-agent");
-
-        var httpResponseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
-        HttpResponse response;
-        if (userAgentValue.isPresent()) {
-          response = httpResponseBuilder
-              .statusCode(HttpStatusCode.SUCCESS)
-              .addHeader("content-type", "text/plain")
-              .addHeader("content-length", String.valueOf(userAgentValue.get().length()))
-              .messageBody(userAgentValue.get())
-              .build();
-        } else {
-          response = httpResponseBuilder
-              .statusCode(HttpStatusCode.NOT_FOUND)
-              .build();
-        }
+        HttpResponse response = handler.handle(httpRequest);
 
         sockOutWriter.println(response.compiled());
         inReader.close();
