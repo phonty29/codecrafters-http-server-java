@@ -18,7 +18,9 @@ public class Main {
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.out.println("Logs from your program will appear here!");
-    GlobalScope.FILE_PARENT_PATH = args[1];
+    if (args.length > 0) {
+      GlobalScope.FILE_PARENT_PATH = args[1];
+    }
 
     // Uncomment this block to pass the first stage
 
