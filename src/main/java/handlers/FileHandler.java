@@ -15,6 +15,7 @@ public class FileHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle(HttpRequest request) {
+    System.out.println("FileHandler.handle starts here");
     String filename = request.getRequestURI().substring("/file/".length());
     String filePath = String.format("/%s/%s", GlobalScope.FILE_PARENT_PATH, filename);
     StringBuilder bodyBuilder = new StringBuilder();
