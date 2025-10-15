@@ -1,6 +1,5 @@
 package handlers;
 
-import context.GlobalScope;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import io.HttpRequest;
