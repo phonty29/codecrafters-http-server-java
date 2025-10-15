@@ -24,7 +24,7 @@ public class HttpRequestHandler implements IHttpRequestHandler {
               .build();
       case String s when s.startsWith("/echo/") -> echoHandler.handle(request);
       case "/user-agent" -> userAgentHandler.handle(request);
-      case String s when s.startsWith("/file/") -> fileHandler.handle(request);
+      case String s when s.startsWith("/files/") -> fileHandler.handle(request);
       default ->
           HttpResponse.builder().statusCode(HttpStatusCode.NOT_FOUND).version(HttpVersion.HTTP_1_1)
               .build();
