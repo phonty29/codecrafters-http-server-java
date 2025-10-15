@@ -6,17 +6,20 @@ import enums.HttpVersion;
 import io.HttpRequest;
 import io.HttpResponse;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class FileHandler implements IHttpRequestHandler {
+  private static final String FILE_PARENT_PATH;
+  static {
+    FILE_PARENT_PATH = "tmp/data/codecrafters.io/http-server-tester";
+  }
 
   @Override
   public HttpResponse handle(HttpRequest request) {
     String filename = request.getRequestURI().substring("/files/".length());
-    String filePath = String.format("/%s/%s", GlobalScope.FILE_PARENT_PATH, filename);
+    String filePath = String.format("/%s/%s", FILE_PARENT_PATH, filename);
     StringBuilder bodyBuilder = new StringBuilder();
     try (
         BufferedReader fileReader = new BufferedReader(new FileReader(filePath))

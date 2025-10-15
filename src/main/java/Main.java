@@ -1,8 +1,4 @@
-import context.GlobalScope;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -10,7 +6,6 @@ import java.util.concurrent.Executors;
 
 public class Main {
   private static final ExecutorService threadPool;
-  public static String[] ARGS;
   static {
     threadPool = Executors.newFixedThreadPool(10);
   }
@@ -18,11 +13,6 @@ public class Main {
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.out.println("Logs from your program will appear here!");
-    if (args.length > 0) {
-      GlobalScope.FILE_PARENT_PATH = args[1];
-    }
-
-    // Uncomment this block to pass the first stage
 
     try (ServerSocket serverSocket = new ServerSocket(4221)) {
       // Since the tester restarts your program quite often, setting SO_REUSEADDR
