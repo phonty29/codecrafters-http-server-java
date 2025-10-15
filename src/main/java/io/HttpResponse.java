@@ -1,3 +1,5 @@
+package io;
+
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import java.util.HashMap;
@@ -78,7 +80,6 @@ public class HttpResponse {
     public HttpResponseBuilder messageBody(String body) {
       this.httpResponse.setMessageBody(body);
       if (this.httpResponse.version.isGreaterOrEquals(HttpVersion.HTTP_1_1)) {
-        this.httpResponse.addHeader("content-type", "text/plain");
         this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
       }
       return this;
