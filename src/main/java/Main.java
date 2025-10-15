@@ -1,3 +1,4 @@
+import context.GlobalScope;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
   private static final ExecutorService threadPool;
+  public static String[] ARGS;
   static {
     threadPool = Executors.newFixedThreadPool(10);
   }
@@ -16,6 +18,7 @@ public class Main {
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.out.println("Logs from your program will appear here!");
+    GlobalScope.FILE_PARENT_PATH = args[1];
 
     // Uncomment this block to pass the first stage
 
@@ -28,7 +31,6 @@ public class Main {
         Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
         threadPool.submit(new ConnectionHandler(sock));
       }
-
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
       throw new RuntimeException(e);
