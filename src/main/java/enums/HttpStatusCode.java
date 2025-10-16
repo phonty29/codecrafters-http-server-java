@@ -2,7 +2,10 @@ package enums;
 
 public enum HttpStatusCode {
   SUCCESS(200, "OK"),
-  NOT_FOUND(404, "Not Found");
+  CREATED(201, "Created"),
+  METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
+  NOT_FOUND(404, "Not Found"),
+  INTERNAL_SERVER_ERROR(500, "Internal Server Error");
 
   private final int code;
   private final String phrase;
