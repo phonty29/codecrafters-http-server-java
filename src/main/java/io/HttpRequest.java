@@ -1,5 +1,6 @@
 package io;
 
+import enums.CompressionScheme;
 import enums.HttpMethod;
 import enums.HttpVersion;
 import exceptions.HttpIncorrectHeaderFormat;
@@ -8,7 +9,9 @@ import exceptions.HttpRequestLineLengthException;
 import exceptions.HttpVersionNotSupported;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +26,8 @@ public class HttpRequest {
   private final Map<String, String> headers = new HashMap<>();
   // Optional message body
   private String messageBody;
+
+  private static final String ACCEPT_ENCODING_KEY = "accept-encoding";
 
   public static HttpRequestBuilder builder() {
     return new HttpRequestBuilder();
@@ -97,6 +102,20 @@ public class HttpRequest {
     if (this.headers.containsKey(key)) {
       return Optional.of(this.headers.get(key));
     }
+    return Optional.empty();
+  }
+
+  public Optional<CompressionScheme> compressionScheme() {
+    if (this.headers.containsKey(ACCEPT_ENCODING_KEY)) {
+      var schemes = Arrays.stream(this.headers.get(ACCEPT_ENCODING_KEY).split(",")).map(
+          String::trim).toList();
+      for (String scheme : schemes) {
+        if (CompressionScheme.supports(scheme)) {
+          return CompressionScheme.fromName(scheme);
+        }
+      }
+    }
+
     return Optional.empty();
   }
 

@@ -20,13 +20,19 @@ public class HttpRequestHandler implements IHttpRequestHandler {
   private HttpResponse dispatch(HttpRequest request) {
     return switch (request.getRequestURI()) {
       case "/" ->
-          HttpResponse.builder().statusCode(HttpStatusCode.SUCCESS).version(HttpVersion.HTTP_1_1)
+          HttpResponse
+              .builder()
+              .statusCode(HttpStatusCode.SUCCESS)
+              .version(HttpVersion.HTTP_1_1)
               .build();
       case String s when s.startsWith("/echo/") -> echoHandler.handle(request);
       case "/user-agent" -> userAgentHandler.handle(request);
       case String s when s.startsWith("/files/") -> fileHandler.handle(request);
       default ->
-          HttpResponse.builder().statusCode(HttpStatusCode.NOT_FOUND).version(HttpVersion.HTTP_1_1)
+          HttpResponse
+              .builder()
+              .statusCode(HttpStatusCode.NOT_FOUND)
+              .version(HttpVersion.HTTP_1_1)
               .build();
     };
   }

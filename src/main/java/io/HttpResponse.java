@@ -1,10 +1,12 @@
 package io;
 
+import enums.CompressionScheme;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class HttpResponse {
@@ -15,6 +17,8 @@ public class HttpResponse {
   private final Map<String, String> headers = new HashMap<>();
   // Response message body
   private String messageBody = "";
+
+  private final static String CONTENT_ENCODING_KEY = "content-encoding";
 
   public static HttpResponseBuilder builder() {
     return new HttpResponseBuilder();
@@ -30,6 +34,10 @@ public class HttpResponse {
 
   private void addHeader(String key, String value) {
     this.headers.put(key.toLowerCase(), value.toLowerCase());
+  }
+
+  private void removeHeader(String key) {
+    this.headers.remove(key);
   }
 
   private void setMessageBody(String body) {
@@ -54,11 +62,27 @@ public class HttpResponse {
     return headersBuilder.toString();
   }
 
+  private void setCompressionScheme(CompressionScheme scheme) {
+    this.headers.put(CONTENT_ENCODING_KEY, scheme.getName());
+  }
+
+  private Optional<CompressionScheme> compressionScheme() {
+    if (this.headers.containsKey(CONTENT_ENCODING_KEY)) {
+      String schemeName = this.headers.get(CONTENT_ENCODING_KEY);
+      return CompressionScheme.fromName(schemeName);
+    }
+
+    return Optional.empty();
+  }
+
   public static class HttpResponseBuilder {
     private final HttpResponse httpResponse = new HttpResponse();
 
     public HttpResponse build() {
       validateHttpResponse();
+      if (this.httpResponse.compressionScheme().isPresent() && this.httpResponse.messageBody.isEmpty()) {
+        this.httpResponse.removeHeader(CONTENT_ENCODING_KEY);
+      }
       return this.httpResponse;
     }
 
@@ -77,11 +101,23 @@ public class HttpResponse {
       return this;
     }
 
+    public HttpResponseBuilder compressionScheme(CompressionScheme scheme) {
+      this.httpResponse.setCompressionScheme(scheme);
+//      if (Objects.nonNull(this.httpResponse.messageBody)) {
+//         make compression
+//      }
+      return this;
+    }
+
     public HttpResponseBuilder messageBody(String body) {
-      this.httpResponse.setMessageBody(body);
-      if (this.httpResponse.version.isGreaterOrEquals(HttpVersion.HTTP_1_1)) {
-        this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
-      }
+//      var optCompressionScheme = this.httpResponse.compressionScheme();
+//      if (optCompressionScheme.isPresent()) {
+//        String compressedBody = compress(optCompressionScheme.get(), body);
+//        this.httpResponse.setMessageBody(compressedBody);
+//      } else {
+        this.httpResponse.setMessageBody(body);
+//      }
+      this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
       return this;
     }
 

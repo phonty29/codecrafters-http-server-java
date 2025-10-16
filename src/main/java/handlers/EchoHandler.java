@@ -9,13 +9,18 @@ public class EchoHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle(HttpRequest request) {
-    String echo = request.getRequestURI().substring("/echo/".length());
-    return HttpResponse
+    String body = request.getRequestURI().substring("/echo/".length());
+    var builder = HttpResponse
         .builder()
+        .addHeader("content-type", "text/plain")
         .statusCode(HttpStatusCode.SUCCESS)
         .version(HttpVersion.HTTP_1_1)
-        .messageBody(echo)
-        .addHeader("content-type", "text/plain")
-        .build();
+        .messageBody(body);
+
+    if (request.compressionScheme().isPresent()) {
+      builder = builder
+          .compressionScheme(request.compressionScheme().get());
+    }
+    return builder.build();
   }
 }

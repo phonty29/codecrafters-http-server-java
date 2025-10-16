@@ -1,5 +1,6 @@
 package handlers;
 
+import enums.CompressionScheme;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import io.HttpRequest;
@@ -10,17 +11,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class FileHandler implements IHttpRequestHandler {
   private static final String FILE_PARENT_PATH;
   static {
     FILE_PARENT_PATH = "tmp/data/codecrafters.io/http-server-tester";
   }
+  private CompressionScheme schemeOptional;
 
   @Override
   public HttpResponse handle(HttpRequest request) {
     String filename = request.getRequestURI().substring("/files/".length());
     String filePath = String.format("/%s/%s", FILE_PARENT_PATH, filename);
+    if (request.compressionScheme().isPresent()) {
+      this.schemeOptional = request.compressionScheme().get();
+    }
 
     return switch (request.getHttpMethod()) {
       case GET -> handleGet(filePath);
@@ -53,13 +60,18 @@ public class FileHandler implements IHttpRequestHandler {
       System.err.println("FileHandler.handle " + e.getMessage());
     }
 
-    return HttpResponse
+    var builder = HttpResponse
         .builder()
         .statusCode(HttpStatusCode.SUCCESS)
         .version(HttpVersion.HTTP_1_1)
         .addHeader("content-type", "application/octet-stream")
-        .messageBody(bodyBuilder.toString())
-        .build();
+        .messageBody(bodyBuilder.toString());
+    if (Objects.nonNull(this.schemeOptional)) {
+      builder = builder
+          .compressionScheme(this.schemeOptional);
+    }
+
+    return builder.build();
   }
 
   private HttpResponse handlePost(String filePath, String messageBody) {
