@@ -1,10 +1,10 @@
 package handlers;
 
-import enums.CompressionScheme;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
 import io.HttpRequest;
 import io.HttpResponse;
+import io.HttpResponse.HttpResponseBuilder;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -12,30 +12,30 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 public class FileHandler implements IHttpRequestHandler {
+  private final HttpRequest request;
+  private final HttpResponseBuilder httpResponseBuilder;
   private static final String FILE_PARENT_PATH;
   static {
     FILE_PARENT_PATH = "tmp/data/codecrafters.io/http-server-tester";
   }
-  private CompressionScheme schemeOptional;
+
+  public FileHandler(HttpRequest request, HttpResponseBuilder httpResponseBuilder) {
+    this.request = request;
+    this.httpResponseBuilder = httpResponseBuilder;
+  }
 
   @Override
-  public HttpResponse handle(HttpRequest request) {
-    String filename = request.getRequestURI().substring("/files/".length());
+  public HttpResponse handle() {
+    String filename = this.request.getRequestURI().substring("/files/".length());
     String filePath = String.format("/%s/%s", FILE_PARENT_PATH, filename);
-    if (request.compressionScheme().isPresent()) {
-      this.schemeOptional = request.compressionScheme().get();
-    }
 
-    return switch (request.getHttpMethod()) {
+    return switch (this.request.getHttpMethod()) {
       case GET -> handleGet(filePath);
-      case POST -> handlePost(filePath, request.getMessageBody());
-      default -> HttpResponse
-          .builder()
+      case POST -> handlePost(filePath);
+      default -> this.httpResponseBuilder
           .statusCode(HttpStatusCode.METHOD_NOT_ALLOWED)
-          .version(HttpVersion.HTTP_1_1)
           .build();
     };
   }
@@ -51,41 +51,31 @@ public class FileHandler implements IHttpRequestHandler {
       }
     } catch (FileNotFoundException e) {
       System.err.println("FileHandler.handle " + e.getMessage());
-      return HttpResponse
-          .builder()
-          .version(HttpVersion.HTTP_1_1)
+      return this.httpResponseBuilder
           .statusCode(HttpStatusCode.NOT_FOUND)
           .build();
     } catch (IOException e) {
       System.err.println("FileHandler.handle " + e.getMessage());
     }
 
-    var builder = HttpResponse
-        .builder()
+    return this.httpResponseBuilder
         .statusCode(HttpStatusCode.SUCCESS)
-        .version(HttpVersion.HTTP_1_1)
         .addHeader("content-type", "application/octet-stream")
-        .messageBody(bodyBuilder.toString());
-    if (Objects.nonNull(this.schemeOptional)) {
-      builder = builder
-          .compressionScheme(this.schemeOptional);
-    }
-
-    return builder.build();
+        .messageBody(bodyBuilder.toString())
+        .build();
   }
 
-  private HttpResponse handlePost(String filePath, String messageBody) {
-    var responseBuilder = HttpResponse.builder().version(HttpVersion.HTTP_1_1);
+  private HttpResponse handlePost(String filePath) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-      writer.write(messageBody);
-      return responseBuilder
+      writer.write(this.request.getMessageBody());
+      return this.httpResponseBuilder
           .statusCode(HttpStatusCode.CREATED)
           .build();
     } catch (IOException e) {
       System.err.println("FileHandler.handle " + e.getMessage());
     }
 
-    return responseBuilder
+    return this.httpResponseBuilder
         .statusCode(HttpStatusCode.INTERNAL_SERVER_ERROR)
         .build();
   }

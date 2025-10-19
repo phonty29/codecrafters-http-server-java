@@ -1,26 +1,26 @@
 package handlers;
 
 import enums.HttpStatusCode;
-import enums.HttpVersion;
 import io.HttpRequest;
 import io.HttpResponse;
+import io.HttpResponse.HttpResponseBuilder;
 
 public class EchoHandler implements IHttpRequestHandler {
+  private final HttpRequest request;
+  private final HttpResponseBuilder httpResponseBuilder;
+
+  public EchoHandler(HttpRequest request, HttpResponseBuilder httpResponseBuilder) {
+    this.request = request;
+    this.httpResponseBuilder = httpResponseBuilder;
+  }
 
   @Override
-  public HttpResponse handle(HttpRequest request) {
-    String body = request.getRequestURI().substring("/echo/".length());
-    var builder = HttpResponse
-        .builder()
+  public HttpResponse handle() {
+    String body = this.request.getRequestURI().substring("/echo/".length());
+    return httpResponseBuilder
         .addHeader("content-type", "text/plain")
         .statusCode(HttpStatusCode.SUCCESS)
-        .version(HttpVersion.HTTP_1_1)
-        .messageBody(body);
-
-    if (request.compressionScheme().isPresent()) {
-      builder = builder
-          .compressionScheme(request.compressionScheme().get());
-    }
-    return builder.build();
+        .messageBody(body)
+        .build();
   }
 }

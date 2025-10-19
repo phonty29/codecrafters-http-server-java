@@ -1,34 +1,26 @@
 package handlers;
 
 import enums.HttpStatusCode;
-import enums.HttpVersion;
 import io.HttpRequest;
 import io.HttpResponse;
+import io.HttpResponse.HttpResponseBuilder;
 
 public class UserAgentHandler implements IHttpRequestHandler {
+  private final HttpRequest request;
+  private final HttpResponseBuilder httpResponseBuilder;
+
+  public UserAgentHandler(HttpRequest request, HttpResponseBuilder httpResponseBuilder) {
+    this.request = request;
+    this.httpResponseBuilder = httpResponseBuilder;
+  }
 
   @Override
-  public HttpResponse handle(HttpRequest request) {
-    var userAgent = request.getHeaderValue("user-agent");
-    var builder = HttpResponse
-        .builder()
+  public HttpResponse handle() {
+    var userAgent = this.request.getHeaderValue("user-agent");
+    var builder = this.httpResponseBuilder
         .statusCode(HttpStatusCode.SUCCESS)
-        .version(HttpVersion.HTTP_1_1)
         .addHeader("content-type", "text/plain");
-
-    if (userAgent.isPresent()) {
-      builder = builder
-          .messageBody(userAgent.get());
-    } else {
-      builder = builder
-          .messageBody("");
-    }
-
-    if (request.compressionScheme().isPresent()) {
-      builder = builder
-          .compressionScheme(request.compressionScheme().get());
-    }
-
+    userAgent.ifPresent(builder::messageBody);
     return builder.build();
   }
 }

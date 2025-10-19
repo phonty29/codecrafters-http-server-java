@@ -8,10 +8,6 @@ import java.net.Socket;
 
 public class ConnectionHandler implements Runnable {
   private final Socket socket;
-  private final static HttpRequestHandler handler;
-  static {
-    handler = new HttpRequestHandler();
-  }
 
   public ConnectionHandler(Socket socket) {
     this.socket = socket;
@@ -26,7 +22,7 @@ public class ConnectionHandler implements Runnable {
         PrintWriter sockOutWriter = new PrintWriter(this.socket.getOutputStream(), true)
     ) {
       HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-      HttpResponse response = handler.handle(httpRequest);
+      HttpResponse response = new HttpRequestHandler(httpRequest).handle();
       sockOutWriter.println(response.compiled());
     } catch (IOException e) {
       System.out.println(e.getMessage());

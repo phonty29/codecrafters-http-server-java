@@ -4,7 +4,7 @@ public class MethodBeforeVersionException extends RuntimeException {
 
   public MethodBeforeVersionException(String message) {
     super(
-        "HTTP method is attempted to set before "
+        "HTTP method is attempted to set before version"
     );
   }
 }
