@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 public class Main {
   private static final ExecutorService threadPool;
   static {
-    threadPool = Executors.newFixedThreadPool(11);
+    threadPool = Executors.newFixedThreadPool(10);
   }
 
   public static void main(String[] args) {
