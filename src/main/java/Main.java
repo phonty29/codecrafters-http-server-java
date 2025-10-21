@@ -19,7 +19,8 @@ public class Main {
       serverSocket.setReuseAddress(true);
 
       while (true) {
-        threadPool.submit(new ConnectionHandler(serverSocket));
+        Socket sock = serverSocket.accept(); // Wait for connection from client. Returns socket.
+        threadPool.submit(new ConnectionHandler(sock));
       }
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
