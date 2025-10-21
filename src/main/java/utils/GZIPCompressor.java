@@ -21,19 +21,4 @@ public class GZIPCompressor {
 
     return baos.toByteArray();
   }
-
-  public static byte[] compress(byte[] in) {
-    if (in == null || in.length == 0) {
-      return new byte[0];
-    }
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
-      gzos.write(in);
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
-    }
-
-    return baos.toByteArray();
-  }
 }
