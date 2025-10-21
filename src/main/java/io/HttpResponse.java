@@ -3,13 +3,9 @@ package io;
 import enums.CompressionScheme;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
-import exceptions.GZIPCompressionException;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HexFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,8 +53,8 @@ public class HttpResponse {
   }
 
   public byte[] compiled() {
-    byte[] statusLineBytes = this.compileStatusLine().getBytes(StandardCharsets.UTF_8);
-    byte[] headersBytes = this.compileHeaders().getBytes(StandardCharsets.UTF_8);
+    byte[] statusLineBytes = this.compileStatusLine();
+    byte[] headersBytes = this.compileHeaders();
     return ByteBuffer.allocate(statusLineBytes.length + headersBytes.length + this.messageBody.length)
         .put(statusLineBytes)
         .put(headersBytes)
@@ -66,18 +62,18 @@ public class HttpResponse {
         .array();
   }
 
-  private String compileStatusLine() {
+  private byte[] compileStatusLine() {
     return String.format("%s %d %s\r\n", this.version, this.statusCode.getCode(),
-        this.statusCode.getPhrase());
+        this.statusCode.getPhrase()).getBytes(StandardCharsets.UTF_8);
   }
 
-  private String compileHeaders() {
+  private byte[] compileHeaders() {
     StringBuilder headersBuilder = new StringBuilder();
     for (var header : this.headers.entrySet()) {
       headersBuilder.append(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
     }
     headersBuilder.append("\r\n");
-    return headersBuilder.toString();
+    return headersBuilder.toString().getBytes(StandardCharsets.UTF_8);
   }
 
   private void setContentLength(int length) {
