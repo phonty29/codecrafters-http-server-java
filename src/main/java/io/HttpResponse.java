@@ -1,5 +1,9 @@
 package io;
 
+import static enums.HttpHeaders.CONNECTION;
+import static enums.HttpHeaders.CONTENT_ENCODING;
+import static enums.HttpHeaders.CONTENT_LENGTH;
+
 import enums.CompressionScheme;
 import enums.HttpStatusCode;
 import enums.HttpVersion;
@@ -10,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-import utils.GZIPCompressor;
+import utils.CompressorService;
 
 public class HttpResponse {
   // Response status line
@@ -20,9 +24,6 @@ public class HttpResponse {
   private final Map<String, String> headers = new HashMap<>();
   // Response message body
   private byte[] messageBody = new byte[0];
-
-  private final static String CONTENT_ENCODING = "content-encoding";
-  private final static String CONTENT_LENGTH = "content-length";
 
   public static HttpResponseBuilder builder() {
     return new HttpResponseBuilder();
@@ -77,20 +78,24 @@ public class HttpResponse {
   }
 
   private void setContentLength(int length) {
-    this.headers.put(CONTENT_LENGTH, String.valueOf(length));
+    this.headers.put(CONTENT_LENGTH.value(), String.valueOf(length));
   }
 
   private void setContentEncoding(CompressionScheme scheme) {
-    this.headers.put(CONTENT_ENCODING, scheme.getName());
+    this.headers.put(CONTENT_ENCODING.value(), scheme.getName());
   }
 
   private Optional<CompressionScheme> compressionScheme() {
-    if (this.headers.containsKey(CONTENT_ENCODING)) {
-      String schemeName = this.headers.get(CONTENT_ENCODING);
+    if (this.headers.containsKey(CONTENT_ENCODING.value())) {
+      String schemeName = this.headers.get(CONTENT_ENCODING.value());
       return CompressionScheme.fromName(schemeName);
     }
 
     return Optional.empty();
+  }
+
+  private void closeConnection() {
+    this.headers.put(CONNECTION.value(), "close");
   }
 
   public static class HttpResponseBuilder {
@@ -99,7 +104,7 @@ public class HttpResponse {
     public HttpResponse build() {
       validateHttpResponse();
       if (this.httpResponse.compressionScheme().isEmpty() || this.httpResponse.messageBody.length == 0) {
-        this.httpResponse.removeHeader(CONTENT_ENCODING);
+        this.httpResponse.removeHeader(CONTENT_ENCODING.value());
       }
       return this.httpResponse;
     }
@@ -124,11 +129,18 @@ public class HttpResponse {
       return this;
     }
 
+    public HttpResponseBuilder closeConnection(boolean doClose) {
+      if (doClose) {
+        this.httpResponse.closeConnection();
+      }
+      return this;
+    }
+
     public HttpResponseBuilder messageBody(String body) {
       var optCompressionScheme = this.httpResponse.compressionScheme();
       // REFACTOR! with Pattern Strategy
-      if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
-        byte[] compressedBody = GZIPCompressor.compress(body);
+      if (optCompressionScheme.isPresent()) {
+        byte[] compressedBody = CompressorService.compress(optCompressionScheme.get(), body);
         this.httpResponse.setMessageBody(compressedBody);
         this.httpResponse.setContentLength(compressedBody.length);
       } else {

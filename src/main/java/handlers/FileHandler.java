@@ -1,7 +1,6 @@
 package handlers;
 
 import enums.HttpStatusCode;
-import enums.HttpVersion;
 import io.HttpRequest;
 import io.HttpResponse;
 import io.HttpResponse.HttpResponseBuilder;
@@ -11,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Objects;
 
 public class FileHandler implements IHttpRequestHandler {
   private final HttpRequest request;

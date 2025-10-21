@@ -16,7 +16,8 @@ public class HttpRequestHandler implements IHttpRequestHandler {
     this.httpResponseBuilder = HttpResponse
         .builder()
         .version(this.request.getHttpVersion())
-        .compressionScheme(this.request.compressionScheme());
+        .compressionScheme(this.request.compressionScheme())
+        .closeConnection(this.request.doCloseConnection());
   }
 
   @Override

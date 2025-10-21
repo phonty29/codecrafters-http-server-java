@@ -1,5 +1,9 @@
 package io;
 
+import static enums.HttpHeaders.ACCEPT_ENCODING;
+import static enums.HttpHeaders.CONNECTION;
+import static enums.HttpHeaders.CONTENT_LENGTH;
+
 import enums.CompressionScheme;
 import enums.HttpMethod;
 import enums.HttpVersion;
@@ -25,9 +29,6 @@ public class HttpRequest {
   private final Map<String, String> headers = new HashMap<>();
   // Optional message body
   private String messageBody;
-
-  private static final String ACCEPT_ENCODING = "accept-encoding";
-  private static final String CONNECTION = "connection";
 
   public static HttpRequestBuilder builder() {
     return new HttpRequestBuilder();
@@ -106,8 +107,8 @@ public class HttpRequest {
   }
 
   public Optional<CompressionScheme> compressionScheme() {
-    if (this.headers.containsKey(ACCEPT_ENCODING)) {
-      var schemes = Arrays.stream(this.headers.get(ACCEPT_ENCODING).split(",")).map(
+    if (this.headers.containsKey(ACCEPT_ENCODING.value())) {
+      var schemes = Arrays.stream(this.headers.get(ACCEPT_ENCODING.value()).split(",")).map(
           String::trim).toList();
       for (String scheme : schemes) {
         if (CompressionScheme.supports(scheme)) {
@@ -120,13 +121,12 @@ public class HttpRequest {
   }
 
   public boolean doCloseConnection() {
-    var connectionHeader = this.getHeaderValue(CONNECTION);
+    var connectionHeader = this.getHeaderValue(CONNECTION.value());
     return connectionHeader.map(s -> s.equals("close")).orElse(false);
   }
 
   public static class HttpRequestBuilder {
     private final static int REQUEST_LINE_LENGTH = 3;
-    private final static String CONTENT_LENGTH_KEY = "content-length";
 
     private final HttpRequest httpRequest = new HttpRequest();
     private BufferedReader reader;
@@ -175,7 +175,7 @@ public class HttpRequest {
 
     private void setMessageBody() throws IOException {
       StringBuilder bodyBuilder = new StringBuilder();
-      var optContentLength = this.httpRequest.getHeaderValue(CONTENT_LENGTH_KEY);
+      var optContentLength = this.httpRequest.getHeaderValue(CONTENT_LENGTH.value());
       if (optContentLength.isPresent()) {
         int contentLength = Integer.parseInt(optContentLength.get());
         if (contentLength > 0) {

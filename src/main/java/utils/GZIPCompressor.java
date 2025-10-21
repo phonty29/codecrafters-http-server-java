@@ -2,11 +2,10 @@ package utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
-public class GZIPCompressor {
-  public static byte[] compress(String str) {
+public class GZIPCompressor implements Compressor {
+  public byte[] compress(String str) {
     if (str == null || str.isEmpty()) {
       return new byte[0];
     }
@@ -15,7 +14,7 @@ public class GZIPCompressor {
     try (
         GZIPOutputStream gzos = new GZIPOutputStream(baos)
     ) {
-      gzos.write(str.getBytes(StandardCharsets.UTF_8));
+      gzos.write(str.getBytes());
       baos.close();
     } catch (IOException e) {
       System.err.println(e.getMessage());
