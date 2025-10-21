@@ -5,6 +5,7 @@ import enums.HttpStatusCode;
 import enums.HttpVersion;
 import exceptions.GZIPCompressionException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,8 +56,14 @@ public class HttpResponse {
     this.messageBody = body.getBytes(StandardCharsets.UTF_8);
   }
 
-  public String compiled() {
-    return this.compileStatusLine() + this.compileHeaders() + Arrays.toString(this.messageBody);
+  public byte[] compiled() {
+    byte[] statusLineBytes = this.compileStatusLine().getBytes(StandardCharsets.UTF_8);
+    byte[] headersBytes = this.compileHeaders().getBytes(StandardCharsets.UTF_8);
+    return ByteBuffer.allocate(statusLineBytes.length + headersBytes.length + this.messageBody.length)
+        .put(statusLineBytes)
+        .put(headersBytes)
+        .put(this.messageBody)
+        .array();
   }
 
   private String compileStatusLine() {
