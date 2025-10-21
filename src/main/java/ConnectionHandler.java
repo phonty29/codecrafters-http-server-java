@@ -22,12 +22,11 @@ public class ConnectionHandler implements Runnable {
         BufferedOutputStream outWriter = new BufferedOutputStream(this.socket.getOutputStream())
     ) {
       while (this.keepAlive) {
-        System.out.println("hello world: " + Thread.currentThread().getName());
-        System.out.println("hello world: " + this.socket.hashCode());
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
         outWriter.write(response.compiled());
         this.keepAlive = !httpRequest.doCloseConnection();
+        System.out.println("hello world: " + this.keepAlive);
       }
     } catch (IOException e) {
       System.out.println(e.getMessage());
