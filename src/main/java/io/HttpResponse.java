@@ -125,7 +125,6 @@ public class HttpResponse {
       // REFACTOR! with Pattern Strategy
       if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
         byte[] compressedBody = GZIPCompressor.compress(body);
-        System.out.println("Compressed body: " + HexFormat.of().formatHex(compressedBody));
         this.httpResponse.setMessageBody(compressedBody);
       } else {
         this.httpResponse.setMessageBody(body);
