@@ -13,7 +13,7 @@ public class GZIPCompressor {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
-      gzos.write(str.getBytes(StandardCharsets.UTF_8));
+      gzos.write(str.getBytes());
     } catch (IOException e) {
       System.err.println(e.getMessage());
     }
