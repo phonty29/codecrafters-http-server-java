@@ -24,7 +24,8 @@ public class HttpResponse {
   // Response message body
   private byte[] messageBody = new byte[0];
 
-  private final static String CONTENT_ENCODING_KEY = "content-encoding";
+  private final static String CONTENT_ENCODING = "content-encoding";
+  private final static String CONTENT_LENGTH = "content-length";
 
   public static HttpResponseBuilder builder() {
     return new HttpResponseBuilder();
@@ -72,17 +73,17 @@ public class HttpResponse {
     return headersBuilder.toString();
   }
 
-  public String toString() {
-    return compiled();
+  private void setContentLength(int length) {
+    this.headers.put(CONTENT_LENGTH, String.valueOf(length));
   }
 
-  private void setCompressionScheme(CompressionScheme scheme) {
-    this.headers.put(CONTENT_ENCODING_KEY, scheme.getName());
+  private void setContentEncoding(CompressionScheme scheme) {
+    this.headers.put(CONTENT_ENCODING, scheme.getName());
   }
 
   private Optional<CompressionScheme> compressionScheme() {
-    if (this.headers.containsKey(CONTENT_ENCODING_KEY)) {
-      String schemeName = this.headers.get(CONTENT_ENCODING_KEY);
+    if (this.headers.containsKey(CONTENT_ENCODING)) {
+      String schemeName = this.headers.get(CONTENT_ENCODING);
       return CompressionScheme.fromName(schemeName);
     }
 
@@ -95,7 +96,7 @@ public class HttpResponse {
     public HttpResponse build() {
       validateHttpResponse();
       if (this.httpResponse.compressionScheme().isEmpty() || this.httpResponse.messageBody.length == 0) {
-        this.httpResponse.removeHeader(CONTENT_ENCODING_KEY);
+        this.httpResponse.removeHeader(CONTENT_ENCODING);
       }
       return this.httpResponse;
     }
@@ -116,7 +117,7 @@ public class HttpResponse {
     }
 
     public HttpResponseBuilder compressionScheme(Optional<CompressionScheme> scheme) {
-      scheme.ifPresent(this.httpResponse::setCompressionScheme);
+      scheme.ifPresent(this.httpResponse::setContentEncoding);
       return this;
     }
 
@@ -126,10 +127,10 @@ public class HttpResponse {
       if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
         byte[] compressedBody = GZIPCompressor.compress(body);
         this.httpResponse.setMessageBody(compressedBody);
-        this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
+        this.httpResponse.setContentLength(compressedBody.length);
       } else {
         this.httpResponse.setMessageBody(body);
-        this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
+        this.httpResponse.setContentLength(body.length());
       }
       return this;
     }
