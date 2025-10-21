@@ -120,8 +120,10 @@ public class HttpResponse {
 
     public HttpResponseBuilder messageBody(String body) {
       var optCompressionScheme = this.httpResponse.compressionScheme();
+      // REFACTOR! with Pattern Strategy
       if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
         byte[] compressedBody = GZIPCompressor.compress(body);
+        System.out.println("Compressed body length: " + compressedBody.length);
         this.httpResponse.setMessageBody(compressedBody);
       } else {
         this.httpResponse.setMessageBody(body);
