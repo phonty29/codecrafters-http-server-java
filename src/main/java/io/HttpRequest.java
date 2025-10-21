@@ -121,6 +121,7 @@ public class HttpRequest {
 
   public boolean doCloseConnection() {
     var connectionHeader = this.getHeaderValue(CONNECTION);
+    System.out.println(connectionHeader.orElse("no connection header"));
     return connectionHeader.map(s -> s.equals("close")).orElse(false);
   }
 
