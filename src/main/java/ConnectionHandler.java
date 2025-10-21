@@ -25,6 +25,7 @@ public class ConnectionHandler implements Runnable {
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
         outWriter.write(response.compiled());
         if (httpRequest.doCloseConnection()) {
+          System.out.println("Connection closed");
           socket.close();
         }
       } catch (IOException e) {
