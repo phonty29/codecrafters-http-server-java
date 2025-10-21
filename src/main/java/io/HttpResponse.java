@@ -126,8 +126,7 @@ public class HttpResponse {
       if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
         byte[] compressedBody = GZIPCompressor.compress(body);
         this.httpResponse.setMessageBody(compressedBody);
-        this.httpResponse.addHeader("content-length", String.valueOf(compressedBody.length));
-        System.out.println(compressedBody.length);
+        this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
       } else {
         this.httpResponse.setMessageBody(body);
         this.httpResponse.addHeader("content-length", String.valueOf(body.length()));
