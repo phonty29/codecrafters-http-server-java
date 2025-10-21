@@ -23,10 +23,10 @@ public class ConnectionHandler implements Runnable {
     ) {
       while (this.keepAlive) {
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-        HttpResponse response = new HttpRequestHandler(httpRequest).handle();
-        outWriter.write(response.compiled());
         this.keepAlive = !httpRequest.doCloseConnection();
-        System.out.println("hello world: " + this.keepAlive);
+        HttpResponse response = new HttpRequestHandler(httpRequest).handle();
+        System.out.println(response.compiled().length);
+        outWriter.write(response.compiled());
       }
     } catch (IOException e) {
       System.out.println(e.getMessage());

@@ -53,18 +53,18 @@ public class HttpResponse {
   }
 
   public byte[] compiled() {
-    byte[] statusLineBytes = this.compileStatusLine();
-    byte[] headersBytes = this.compileHeaders();
-    return ByteBuffer.allocate(statusLineBytes.length + headersBytes.length + this.messageBody.length)
-        .put(statusLineBytes)
-        .put(headersBytes)
+    byte[] statusLine = this.compileStatusLine();
+    byte[] headers = this.compileHeaders();
+    return ByteBuffer.allocate(statusLine.length + headers.length + this.messageBody.length)
+        .put(statusLine)
+        .put(headers)
         .put(this.messageBody)
         .array();
   }
 
   private byte[] compileStatusLine() {
     return String.format("%s %d %s\r\n", this.version, this.statusCode.getCode(),
-        this.statusCode.getPhrase()).getBytes(StandardCharsets.UTF_8);
+        this.statusCode.getPhrase()).getBytes();
   }
 
   private byte[] compileHeaders() {
@@ -73,7 +73,7 @@ public class HttpResponse {
       headersBuilder.append(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
     }
     headersBuilder.append("\r\n");
-    return headersBuilder.toString().getBytes(StandardCharsets.UTF_8);
+    return headersBuilder.toString().getBytes();
   }
 
   private void setContentLength(int length) {
