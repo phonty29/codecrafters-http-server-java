@@ -26,7 +26,8 @@ public class HttpRequest {
   // Optional message body
   private String messageBody;
 
-  private static final String ACCEPT_ENCODING_KEY = "accept-encoding";
+  private static final String ACCEPT_ENCODING = "accept-encoding";
+  private static final String CONNECTION = "connection";
 
   public static HttpRequestBuilder builder() {
     return new HttpRequestBuilder();
@@ -105,8 +106,8 @@ public class HttpRequest {
   }
 
   public Optional<CompressionScheme> compressionScheme() {
-    if (this.headers.containsKey(ACCEPT_ENCODING_KEY)) {
-      var schemes = Arrays.stream(this.headers.get(ACCEPT_ENCODING_KEY).split(",")).map(
+    if (this.headers.containsKey(ACCEPT_ENCODING)) {
+      var schemes = Arrays.stream(this.headers.get(ACCEPT_ENCODING).split(",")).map(
           String::trim).toList();
       for (String scheme : schemes) {
         if (CompressionScheme.supports(scheme)) {
@@ -116,6 +117,11 @@ public class HttpRequest {
     }
 
     return Optional.empty();
+  }
+
+  public boolean doCloseConnection() {
+    var connectionHeader = this.getHeaderValue(CONNECTION);
+    return connectionHeader.map(s -> s.equals("close")).orElse(false);
   }
 
   public static class HttpRequestBuilder {

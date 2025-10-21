@@ -15,17 +15,22 @@ public class ConnectionHandler implements Runnable {
 
   @Override
   public void run() {
-    try (
-        this.socket;
-        BufferedReader inReader = new BufferedReader(
-            new InputStreamReader(this.socket.getInputStream()));
-        BufferedOutputStream outWriter = new BufferedOutputStream(this.socket.getOutputStream())
-    ) {
-      HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-      HttpResponse response = new HttpRequestHandler(httpRequest).handle();
-      outWriter.write(response.compiled());
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
+    while (socket.isConnected() && !socket.isClosed()) {
+      try (
+          BufferedReader inReader = new BufferedReader(
+              new InputStreamReader(this.socket.getInputStream()));
+          BufferedOutputStream outWriter = new BufferedOutputStream(this.socket.getOutputStream())
+      ) {
+        HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
+        HttpResponse response = new HttpRequestHandler(httpRequest).handle();
+        outWriter.write(response.compiled());
+        if (httpRequest.doCloseConnection()) {
+          socket.close();
+        }
+      } catch (IOException e) {
+        System.out.println(e.getMessage());
+        Thread.currentThread().interrupt();
+      }
     }
   }
 }
