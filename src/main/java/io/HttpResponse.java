@@ -6,7 +6,9 @@ import enums.HttpVersion;
 import exceptions.GZIPCompressionException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -123,7 +125,7 @@ public class HttpResponse {
       // REFACTOR! with Pattern Strategy
       if (optCompressionScheme.isPresent() && optCompressionScheme.get().equals(CompressionScheme.GZIP)) {
         byte[] compressedBody = GZIPCompressor.compress(body);
-        System.out.println("Compressed body length: " + compressedBody.length);
+        System.out.println("Compressed body: " + HexFormat.of().formatHex(compressedBody));
         this.httpResponse.setMessageBody(compressedBody);
       } else {
         this.httpResponse.setMessageBody(body);

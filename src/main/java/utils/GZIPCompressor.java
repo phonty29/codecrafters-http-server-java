@@ -12,7 +12,26 @@ public class GZIPCompressor {
     }
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
+    try (GZIPOutputStream gzos = new GZIPOutputStream(baos) {
+      {
+        // Set header timestamp to zero
+        def.setLevel(java.util.zip.Deflater.DEFAULT_COMPRESSION);
+        this.writeHeader();
+      }
+
+      // Override to zero timestamp
+      private void writeHeader() throws IOException {
+        byte[] header = {
+            (byte) 0x1f, (byte) 0x8b, // Magic number
+            (byte) 0x08,              // Compression method
+            (byte) 0x00,              // Flags
+            0, 0, 0, 0,               // mtime = 0
+            (byte) 0x00,              // Extra flags
+            (byte) 0xff               // OS = unknown
+        };
+        out.write(header);
+      }
+    }) {
       gzos.write(str.getBytes());
     } catch (IOException e) {
       System.err.println(e.getMessage());
