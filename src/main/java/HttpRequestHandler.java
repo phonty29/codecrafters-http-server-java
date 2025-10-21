@@ -21,7 +21,9 @@ public class HttpRequestHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle() {
-    return dispatch();
+    var response = dispatch();
+    System.out.println(response);
+    return response;
   }
 
   private HttpResponse dispatch() {
