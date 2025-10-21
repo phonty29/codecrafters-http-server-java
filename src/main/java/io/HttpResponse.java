@@ -70,6 +70,10 @@ public class HttpResponse {
     return headersBuilder.toString();
   }
 
+  public String toString() {
+    return compiled();
+  }
+
   private void setCompressionScheme(CompressionScheme scheme) {
     this.headers.put(CONTENT_ENCODING_KEY, scheme.getName());
   }
