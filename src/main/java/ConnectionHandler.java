@@ -27,6 +27,7 @@ public class ConnectionHandler implements Runnable {
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
         System.out.println(response.compiled().length);
         outWriter.write(response.compiled());
+        outWriter.flush();
       }
     } catch (IOException e) {
       System.out.println(e.getMessage());
