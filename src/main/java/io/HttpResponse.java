@@ -109,9 +109,8 @@ public class HttpResponse {
       return this;
     }
 
-    public HttpResponseBuilder compressionScheme(CompressionScheme scheme) {
-      this.httpResponse.setCompressionScheme(scheme);
-      System.out.println("compression scheme set to: " + scheme.getName());
+    public HttpResponseBuilder compressionScheme(Optional<CompressionScheme> scheme) {
+      scheme.ifPresent(this.httpResponse::setCompressionScheme);
       return this;
     }
 
