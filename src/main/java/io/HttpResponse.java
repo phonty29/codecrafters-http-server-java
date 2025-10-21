@@ -56,7 +56,7 @@ public class HttpResponse {
   }
 
   public String compiled() {
-    return this.compileStatusLine() + this.compileHeaders() + this.messageBody;
+    return this.compileStatusLine() + this.compileHeaders() + Arrays.toString(this.messageBody);
   }
 
   private String compileStatusLine() {
