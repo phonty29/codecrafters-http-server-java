@@ -111,11 +111,7 @@ public class HttpResponse {
 
     public HttpResponseBuilder compressionScheme(CompressionScheme scheme) {
       this.httpResponse.setCompressionScheme(scheme);
-      if (this.httpResponse.messageBody.length > 0) {
-        byte[] compressedBody;
-        compressedBody = GZIPCompressor.compress(this.httpResponse.messageBody);
-        this.httpResponse.setMessageBody(compressedBody);
-      }
+      System.out.println("compression scheme set to: " + scheme.getName());
       return this;
     }
 
