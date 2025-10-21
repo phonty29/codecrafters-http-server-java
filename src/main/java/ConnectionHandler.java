@@ -22,7 +22,8 @@ public class ConnectionHandler implements Runnable {
         BufferedOutputStream outWriter = new BufferedOutputStream(this.socket.getOutputStream())
     ) {
       while (this.keepAlive) {
-        System.out.println("hello world");
+        System.out.println("hello world: " + Thread.currentThread().getName());
+        System.out.println("hello world: " + this.socket.hashCode());
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
         outWriter.write(response.compiled());
