@@ -93,7 +93,9 @@ public class HttpResponse {
     public HttpResponse build() {
       validateHttpResponse();
       if (this.httpResponse.compressionScheme().isPresent() && this.httpResponse.messageBody.length > 0) {
-        this.httpResponse.removeHeader(CONTENT_ENCODING_KEY);
+        System.out.println("Compression scheme is " + this.httpResponse.compressionScheme().get());
+        System.out.println("Message body length " + this.httpResponse.messageBody.length);
+//        this.httpResponse.removeHeader(CONTENT_ENCODING_KEY);
       }
       return this.httpResponse;
     }
