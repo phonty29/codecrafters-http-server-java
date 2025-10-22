@@ -23,6 +23,7 @@ public class ConnectionHandler implements Runnable {
       while (!this.socket.isClosed()) {
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
+        System.out.println(response.compiled().length);
         outWriter.write(response.compiled());
         outWriter.flush();
         if (httpRequest.doCloseConnection()) {
