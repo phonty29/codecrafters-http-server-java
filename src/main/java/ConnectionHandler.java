@@ -20,18 +20,23 @@ public class ConnectionHandler implements Runnable {
             new InputStreamReader(this.socket.getInputStream()));
         BufferedOutputStream outWriter = new BufferedOutputStream(this.socket.getOutputStream())
     ) {
-      boolean keepAlive = true;
-      while (keepAlive) {
+      while (!this.socket.isClosed()) {
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
         HttpResponse response = new HttpRequestHandler(httpRequest).handle();
         outWriter.write(response.compiled());
         outWriter.flush();
         if (httpRequest.doCloseConnection()) {
-          keepAlive = false;
+          break;
         }
       }
     } catch (IOException e) {
       System.out.println(e.getMessage());
+    } finally {
+      try {
+        this.socket.close();
+      } catch (IOException e) {
+        System.out.println(e.getMessage());
+      }
     }
   }
 }
