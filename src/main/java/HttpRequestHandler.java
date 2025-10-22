@@ -24,6 +24,7 @@ public class HttpRequestHandler implements IHttpRequestHandler {
   public HttpResponse handle() {
     var response = dispatch();
     System.out.println("handle: " + response.compiled().length);
+    return response;
   }
 
   private HttpResponse dispatch() {
