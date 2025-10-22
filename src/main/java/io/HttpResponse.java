@@ -130,7 +130,6 @@ public class HttpResponse {
     }
 
     public HttpResponseBuilder closeConnection(boolean doClose) {
-      System.out.println("closeConnection: " + doClose);
       if (doClose) {
         this.httpResponse.closeConnection();
       }

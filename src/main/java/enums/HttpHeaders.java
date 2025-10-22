@@ -13,6 +13,6 @@ public enum HttpHeaders {
   }
 
   public String value() {
-    return this.value;
+    return this.value.toLowerCase();
   }
 }

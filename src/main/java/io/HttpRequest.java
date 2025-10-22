@@ -101,7 +101,7 @@ public class HttpRequest {
 
   public Optional<String> getHeaderValue(String key) {
     if (this.headers.containsKey(key.toLowerCase())) {
-      return Optional.of(this.headers.get(key));
+      return Optional.of(this.headers.get(key.toLowerCase()));
     }
     return Optional.empty();
   }
