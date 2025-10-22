@@ -12,7 +12,6 @@ public class HttpRequestHandler implements IHttpRequestHandler {
   private final HttpResponseBuilder httpResponseBuilder;
 
   public HttpRequestHandler(HttpRequest request) {
-    System.out.println("HttpRequestHandler constructor called");
     this.request = request;
     this.httpResponseBuilder = HttpResponse
         .builder()

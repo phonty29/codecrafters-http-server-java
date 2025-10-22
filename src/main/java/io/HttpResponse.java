@@ -95,7 +95,7 @@ public class HttpResponse {
   }
 
   private void closeConnection() {
-    this.headers.put(CONNECTION.value(), "close");
+    this.addHeader(CONNECTION.value(), "close");
   }
 
   public static class HttpResponseBuilder {
@@ -130,6 +130,7 @@ public class HttpResponse {
     }
 
     public HttpResponseBuilder closeConnection(boolean doClose) {
+      System.out.println("closeConnection: " + doClose);
       if (doClose) {
         this.httpResponse.closeConnection();
       }
