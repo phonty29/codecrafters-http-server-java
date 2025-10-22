@@ -100,7 +100,7 @@ public class HttpRequest {
   }
 
   public Optional<String> getHeaderValue(String key) {
-    if (this.headers.containsKey(key)) {
+    if (this.headers.containsKey(key.toLowerCase())) {
       return Optional.of(this.headers.get(key));
     }
     return Optional.empty();
@@ -168,7 +168,8 @@ public class HttpRequest {
         if (idx == -1) {
           throw new HttpIncorrectHeaderFormat(line);
         }
-        String key = line.substring(0, idx).trim(), value = line.substring(idx+1).trim();
+        String key = line.substring(0, idx).trim().toLowerCase(),
+            value = line.substring(idx+1).trim();
         this.httpRequest.addHeader(key, value);
       }
     }
