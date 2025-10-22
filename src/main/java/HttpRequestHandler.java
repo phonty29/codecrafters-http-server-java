@@ -26,6 +26,7 @@ public class HttpRequestHandler implements IHttpRequestHandler {
   }
 
   private HttpResponse dispatch() {
+    System.out.println("Handling request for " + this.request.getRequestURI());
     return switch (this.request.getRequestURI()) {
       case "/" -> this.httpResponseBuilder
           .statusCode(HttpStatusCode.SUCCESS)
