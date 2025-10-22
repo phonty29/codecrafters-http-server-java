@@ -22,11 +22,11 @@ public class HttpRequestHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle() {
+    System.out.println("HttpRequestHandler.handle called");
     return dispatch();
   }
 
   private HttpResponse dispatch() {
-    System.out.println("Handling request for " + this.request.getRequestURI());
     return switch (this.request.getRequestURI()) {
       case "/" -> this.httpResponseBuilder
           .statusCode(HttpStatusCode.SUCCESS)
