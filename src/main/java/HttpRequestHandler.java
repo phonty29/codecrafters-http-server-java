@@ -22,9 +22,7 @@ public class HttpRequestHandler implements IHttpRequestHandler {
 
   @Override
   public HttpResponse handle() {
-    var response = dispatch();
-    System.out.println("handle: " + response.compiled().length);
-    return response;
+    return dispatch();
   }
 
   private HttpResponse dispatch() {
