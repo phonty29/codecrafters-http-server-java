@@ -5,6 +5,7 @@ public enum HttpStatusCode {
   CREATED(201, "Created"),
   METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
   NOT_FOUND(404, "Not Found"),
+  BAD_REQUEST(400, "Bad Request"),
   INTERNAL_SERVER_ERROR(500, "Internal Server Error");
 
   private final int code;

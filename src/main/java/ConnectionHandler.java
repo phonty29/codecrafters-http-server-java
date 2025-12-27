@@ -1,3 +1,4 @@
+import handlers.HttpRequestHandler;
 import io.HttpRequest;
 import io.HttpResponse;
 import java.io.BufferedOutputStream;
@@ -22,7 +23,7 @@ public class ConnectionHandler implements Runnable {
     ) {
       while (this.socket.isConnected() && !this.socket.isClosed()) {
         HttpRequest httpRequest = HttpRequest.builder().fromReader(inReader).build();
-        HttpResponse response = new HttpRequestHandler(httpRequest).handle();
+        HttpResponse response = new HttpRequestHandler().handle(httpRequest);
         outWriter.write(response.compiled());
         outWriter.flush();
 
