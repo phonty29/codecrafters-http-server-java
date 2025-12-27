@@ -5,7 +5,10 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class CompressorService {
-  private static final Map<CompressionScheme, Compressor> compressorMap = new EnumMap<>(CompressionScheme.class);
+
+  private static final Map<CompressionScheme, Compressor> compressorMap = new EnumMap<>(
+      CompressionScheme.class);
+
   static {
     compressorMap.put(CompressionScheme.GZIP, new GZIPCompressor());
   }

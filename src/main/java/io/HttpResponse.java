@@ -17,11 +17,12 @@ import java.util.stream.Stream;
 import utils.CompressorService;
 
 public class HttpResponse {
+
+  // Response headers
+  private final Map<String, String> headers = new HashMap<>();
   // Response status line
   private HttpVersion version;
   private HttpStatusCode statusCode;
-  // Response headers
-  private final Map<String, String> headers = new HashMap<>();
   // Response message body
   private byte[] messageBody = new byte[0];
 
@@ -99,11 +100,13 @@ public class HttpResponse {
   }
 
   public static class HttpResponseBuilder {
+
     private final HttpResponse httpResponse = new HttpResponse();
 
     public HttpResponse build() {
       validateHttpResponse();
-      if (this.httpResponse.compressionScheme().isEmpty() || this.httpResponse.messageBody.length == 0) {
+      if (this.httpResponse.compressionScheme().isEmpty()
+          || this.httpResponse.messageBody.length == 0) {
         this.httpResponse.removeHeader(CONTENT_ENCODING.value());
       }
       return this.httpResponse;

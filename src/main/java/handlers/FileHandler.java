@@ -11,7 +11,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileHandler implements Handler {
+
   private static final String FILE_PARENT_PATH;
+
   static {
     FILE_PARENT_PATH = "tmp/data/codecrafters.io/http-server-tester";
   }

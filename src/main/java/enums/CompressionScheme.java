@@ -11,10 +11,6 @@ public enum CompressionScheme {
     this.name = name;
   }
 
-  public String getName() {
-    return this.name;
-  }
-
   public static boolean supports(String name) {
     for (var scheme : values()) {
       if (scheme.name.contentEquals(name)) {
@@ -32,5 +28,9 @@ public enum CompressionScheme {
       }
     }
     return Optional.empty();
+  }
+
+  public String getName() {
+    return this.name;
   }
 }

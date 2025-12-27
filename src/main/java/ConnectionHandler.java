@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ConnectionHandler implements Runnable {
+
   private final Socket socket;
 
   public ConnectionHandler(Socket socket) {

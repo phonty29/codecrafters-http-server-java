@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class HttpRequestHandler implements Handler {
+
   private final List<Route> routes = List.of(
-      new Route(p -> p.equals("/"), (r) -> prepareResponse(r).statusCode(HttpStatusCode.SUCCESS).build()),
+      new Route(p -> p.equals("/"),
+          (r) -> prepareResponse(r).statusCode(HttpStatusCode.SUCCESS).build()),
       new Route(p -> p.startsWith("/echo"), new EchoHandler()),
       new Route(p -> p.equals("/user-agent"), new UserAgentHandler()),
       new Route(p -> p.startsWith("/files"), new FileHandler())

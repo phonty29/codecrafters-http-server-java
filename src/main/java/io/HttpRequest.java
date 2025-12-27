@@ -21,12 +21,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class HttpRequest {
+
+  // Request Headers
+  private final Map<String, String> headers = new HashMap<>();
   // Request Line
   private HttpMethod httpMethod;
   private String requestURI = "";
   private HttpVersion httpVersion;
-  // Request Headers
-  private final Map<String, String> headers = new HashMap<>();
   // Optional message body
   private String messageBody;
 
@@ -44,20 +45,8 @@ public class HttpRequest {
     this.headers.put(key.toLowerCase(), value.toLowerCase());
   }
 
-  void setMessageBody(String messageBody) {
-    this.messageBody = messageBody;
-  }
-
-  private void setHttpVersion(HttpVersion version) {
-    this.httpVersion = version;
-  }
-
-  private void setHttpVersion(String version) {
-    try {
-      this.setHttpVersion(HttpVersion.fromValue(version));
-    } catch (IllegalArgumentException ex) {
-      throw new HttpVersionNotSupported(version);
-    }
+  public HttpMethod getHttpMethod() {
+    return this.httpMethod;
   }
 
   private void setHttpMethod(HttpMethod method) {
@@ -79,24 +68,36 @@ public class HttpRequest {
     }
   }
 
-  private void setRequestURI(String requestURI) {
-    this.requestURI = requestURI;
-  }
-
-  public HttpMethod getHttpMethod() {
-    return this.httpMethod;
-  }
-
   public HttpVersion getHttpVersion() {
     return this.httpVersion;
+  }
+
+  private void setHttpVersion(HttpVersion version) {
+    this.httpVersion = version;
+  }
+
+  private void setHttpVersion(String version) {
+    try {
+      this.setHttpVersion(HttpVersion.fromValue(version));
+    } catch (IllegalArgumentException ex) {
+      throw new HttpVersionNotSupported(version);
+    }
   }
 
   public String getRequestURI() {
     return this.requestURI;
   }
 
+  private void setRequestURI(String requestURI) {
+    this.requestURI = requestURI;
+  }
+
   public String getMessageBody() {
     return this.messageBody;
+  }
+
+  void setMessageBody(String messageBody) {
+    this.messageBody = messageBody;
   }
 
   public Optional<String> getHeaderValue(String key) {
@@ -126,6 +127,7 @@ public class HttpRequest {
   }
 
   public static class HttpRequestBuilder {
+
     private final static int REQUEST_LINE_LENGTH = 3;
 
     private final HttpRequest httpRequest = new HttpRequest();
@@ -169,7 +171,7 @@ public class HttpRequest {
           throw new HttpIncorrectHeaderFormat(line);
         }
         String key = line.substring(0, idx).trim().toLowerCase(),
-            value = line.substring(idx+1).trim();
+            value = line.substring(idx + 1).trim();
         this.httpRequest.addHeader(key, value);
       }
     }

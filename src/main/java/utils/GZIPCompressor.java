@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 public class GZIPCompressor implements Compressor {
+
   public byte[] compress(String str) {
     if (str == null || str.isEmpty()) {
       return new byte[0];

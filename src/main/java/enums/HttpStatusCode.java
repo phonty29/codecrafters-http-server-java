@@ -16,14 +16,6 @@ public enum HttpStatusCode {
     this.phrase = phrase;
   }
 
-  public int getCode() {
-    return this.code;
-  }
-
-  public String getPhrase() {
-    return this.phrase;
-  }
-
   public static HttpStatusCode fromCode(int codeNumber) {
     for (var code : HttpStatusCode.values()) {
       if (code.code == codeNumber) {
@@ -31,5 +23,13 @@ public enum HttpStatusCode {
       }
     }
     throw new IllegalArgumentException();
+  }
+
+  public int getCode() {
+    return this.code;
+  }
+
+  public String getPhrase() {
+    return this.phrase;
   }
 }
